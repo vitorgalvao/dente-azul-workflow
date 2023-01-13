@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.vitorgalvao.alfred.denteazul</string>
+	<key>connections</key>
+	<dict>
+		<key>660C13F4-B83C-4929-9DD0-735D2BAA2F07</key>
+		<array/>
+		<key>6DC6A16C-DD83-4EBC-B2E0-625FB1BCF1AD</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>92F90D27-0051-41F8-B6C1-7CED843FB32F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>75C921E4-2503-460C-A531-3D3F4EC85976</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>660C13F4-B83C-4929-9DD0-735D2BAA2F07</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>92F90D27-0051-41F8-B6C1-7CED843FB32F</key>
+		<array/>
+	</dict>
+	<key>createdby</key>
+	<string>Vítor Galvão</string>
+	<key>description</key>
+	<string>Toggle bluetooth and paired device connectivity</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Dente Azul</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>script</key>
+				<string>blueutil --power "${1}"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>5</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>660C13F4-B83C-4929-9DD0-735D2BAA2F07</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>{var:full_toggle_keyword}</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Gathering bluetooth status…</string>
+				<key>script</key>
+				<string>function runCommand(...arguments) {
+  const task = $.NSTask.alloc.init
+  const stdout = $.NSPipe.pipe
+
+  task.executableURL = $.NSURL.alloc.initFileURLWithPath("/usr/bin/env")
+  task.arguments = arguments
+  task.standardOutput = stdout
+  task.launchAndReturnError(false)
+
+  const dataOut = stdout.fileHandleForReading.readDataToEndOfFile
+  const stringOut = $.NSString.alloc.initWithDataEncoding(dataOut, $.NSUTF8StringEncoding).js
+
+  return stringOut
+}
+
+let currentState, toggleState, icon
+
+if (runCommand("blueutil", "--power") === "0\n") {
+  currentState = "Off"
+  toggleState = "on"
+  iconPath = "icon_alt.png"
+} else {
+  currentState = "On"
+  toggleState = "off"
+  iconPath = "icon.png"
+}
+
+JSON.stringify({ items: [{
+  title: `Bluetooth is ${currentState}`,
+  subtitle: `Action to turn it ${toggleState}`,
+  arg: toggleState,
+  icon: { path: iconPath }
+}]})</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>When turning bluetooth on, make it visible in the menu bar</string>
+				<key>title</key>
+				<string>Toggle Bluetooth and Menu Bar Visibility</string>
+				<key>type</key>
+				<integer>7</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>75C921E4-2503-460C-A531-3D3F4EC85976</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>readonly address="${1}"
+
+[[ "${connected}" == 'true' ]] &amp;&amp; blueutil --disconnect "${address}" --wait-disconnect "${address}" || blueutil --connect "${address}" --wait-connect "${address}"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>5</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>92F90D27-0051-41F8-B6C1-7CED843FB32F</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>{var:device_toggle_keyword}</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Gathering devices info…</string>
+				<key>script</key>
+				<string>function runCommand(...arguments) {
+  const task = $.NSTask.alloc.init
+  const stdout = $.NSPipe.pipe
+
+  task.executableURL = $.NSURL.alloc.initFileURLWithPath("/usr/bin/env")
+  task.arguments = arguments
+  task.standardOutput = stdout
+  task.launchAndReturnError(false)
+
+  const dataOut = stdout.fileHandleForReading.readDataToEndOfFile
+  const stringOut = $.NSString.alloc.initWithDataEncoding(dataOut, $.NSUTF8StringEncoding).js
+
+  return stringOut
+}
+
+pairedDevices = JSON.parse(runCommand("blueutil", "--format", "json", "--paired"))
+
+sfItems = pairedDevices.map(device =&gt; {
+  state = device["connected"] ? "Connected" : "Not Connected"
+  iconPath = device["connected"] ? "icon.png" : "icon_alt.png"
+
+  return {
+    variables: { connected: device["connected"] },
+    uid: device["address"],
+    title: device["name"],
+    subtitle: state,
+    arg: device["address"],
+    icon: { path: iconPath }
+  }
+})
+
+JSON.stringify({ items: sfItems })</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>Selected one to toggle connection status</string>
+				<key>title</key>
+				<string>Show Paired Bluetooth Devices</string>
+				<key>type</key>
+				<integer>7</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>6DC6A16C-DD83-4EBC-B2E0-625FB1BCF1AD</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>## Usage
+
+Search your paired bluetooth devices via the Device Toggle Keyword (default: `btd`). Press &lt;kbd&gt;↩&lt;/kbd&gt; to reverse a device’s state (on becomes off, and vice-versa).
+
+![Connect of disconnect devices](images/about/btd.png)
+
+Toggle bluetooth as a whole via the Bluetooth Toggle Keyword (default: `btt`).
+
+![Connect or disconnect bluetooth](images/about/btt.png)</string>
+	<key>uidata</key>
+	<dict>
+		<key>660C13F4-B83C-4929-9DD0-735D2BAA2F07</key>
+		<dict>
+			<key>xpos</key>
+			<real>265</real>
+			<key>ypos</key>
+			<real>25</real>
+		</dict>
+		<key>6DC6A16C-DD83-4EBC-B2E0-625FB1BCF1AD</key>
+		<dict>
+			<key>note</key>
+			<string>Show Paired Bluetooth Devices</string>
+			<key>xpos</key>
+			<real>35</real>
+			<key>ypos</key>
+			<real>185</real>
+		</dict>
+		<key>75C921E4-2503-460C-A531-3D3F4EC85976</key>
+		<dict>
+			<key>note</key>
+			<string>Toggle Bluetooh</string>
+			<key>xpos</key>
+			<real>35</real>
+			<key>ypos</key>
+			<real>25</real>
+		</dict>
+		<key>92F90D27-0051-41F8-B6C1-7CED843FB32F</key>
+		<dict>
+			<key>xpos</key>
+			<real>265</real>
+			<key>ypos</key>
+			<real>185</real>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>btd</string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Device Toggle Keyword</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>device_toggle_keyword</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>btt</string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Bluetooth Toggle Keyword</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>full_toggle_keyword</string>
+		</dict>
+	</array>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>2023.1</string>
+	<key>webaddress</key>
+	<string>https://github.com/vitorgalvao/dente-azul-workflow/</string>
+</dict>
+</plist>
