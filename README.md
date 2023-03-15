@@ -2,11 +2,11 @@
 
 Toggle bluetooth and paired device connectivity
 
-<a href='https://alfred.app/workflows/vitor/dente-azul'>⤓ Install From the Alfred Gallery</a>
+<a href='https://alfred.app/workflows/vitor/dente-azul'>⤓ Install on the Alfred Gallery</a>
 
 ## Usage
 
-Search your paired bluetooth devices via the Device Toggle Keyword (default: `btd`). Press <kbd>⏎</kbd> to reverse a device’s state (on becomes off, and vice-versa).
+Search your paired bluetooth devices via the Device Toggle Keyword (default: `btd`). Press <kbd>↩&#xFE0E;</kbd> to reverse a device’s state (on becomes off, and vice-versa).
 
 ![Connect of disconnect devices](Workflow/images/about/btd.png)
 

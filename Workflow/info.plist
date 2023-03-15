@@ -136,9 +136,9 @@ JSON.stringify({ items: [{
 				<key>scriptfile</key>
 				<string></string>
 				<key>subtext</key>
-				<string>When turning bluetooth on, make it visible in the menu bar</string>
+				<string>Turn bluetooth on or off</string>
 				<key>title</key>
-				<string>Toggle Bluetooth and Menu Bar Visibility</string>
+				<string>Toggle Bluetooth</string>
 				<key>type</key>
 				<integer>7</integer>
 				<key>withspace</key>
@@ -161,7 +161,7 @@ JSON.stringify({ items: [{
 				<key>script</key>
 				<string>readonly address="${1}"
 
-[[ "${connected}" == 'true' ]] &amp;&amp; blueutil --disconnect "${address}" --wait-disconnect "${address}" || blueutil --connect "${address}" --wait-connect "${address}"</string>
+[[ "${connected}" == '1' ]] &amp;&amp; blueutil --disconnect "${address}" --wait-disconnect "${address}" || blueutil --connect "${address}" --wait-connect "${address}"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -235,13 +235,13 @@ sfItems = pairedDevices.map(device =&gt; {
   }
 })
 
-JSON.stringify({ items: sfItems })</string>
+JSON.stringify({ rerun: 0.5, items: sfItems })</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
 				<string></string>
 				<key>subtext</key>
-				<string>Selected one to toggle connection status</string>
+				<string>Action to toggle connection status</string>
 				<key>title</key>
 				<string>Show Paired Bluetooth Devices</string>
 				<key>type</key>
@@ -350,7 +350,7 @@ Toggle bluetooth as a whole via the Bluetooth Toggle Keyword (default: `btt`).
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>2023.1</string>
+	<string>2023.2</string>
 	<key>webaddress</key>
 	<string>https://github.com/vitorgalvao/dente-azul-workflow/</string>
 </dict>
