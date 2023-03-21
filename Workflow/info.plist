@@ -260,11 +260,11 @@ JSON.stringify({ rerun: 0.5, items: sfItems })</string>
 	<key>readme</key>
 	<string>## Usage
 
-Search your paired bluetooth devices via the Device Toggle Keyword (default: `btd`). Press &lt;kbd&gt;↩&lt;/kbd&gt; to reverse a device’s state (on becomes off, and vice-versa).
+Search your paired bluetooth devices via the `btd` keyword. Press &lt;kbd&gt;↩&lt;/kbd&gt; to reverse a device’s state (on becomes off, and vice-versa).
 
 ![Connect of disconnect devices](images/about/btd.png)
 
-Toggle bluetooth as a whole via the Bluetooth Toggle Keyword (default: `btt`).
+Toggle bluetooth as a whole via the `btt` keyword.
 
 ![Connect or disconnect bluetooth](images/about/btt.png)</string>
 	<key>uidata</key>
@@ -347,8 +347,6 @@ Toggle bluetooth as a whole via the Bluetooth Toggle Keyword (default: `btt`).
 			<string>full_toggle_keyword</string>
 		</dict>
 	</array>
-	<key>variablesdontexport</key>
-	<array/>
 	<key>version</key>
 	<string>2023.2</string>
 	<key>webaddress</key>
