@@ -10,6 +10,6 @@ Search your paired bluetooth devices via the `btd` keyword. Press <kbd>↩&#xFE0
 
 ![Connect of disconnect devices](Workflow/images/about/btd.png)
 
-Toggle bluetooth as a whole via the `btt` keyword.
+Toggle bluetooth as a whole via the `btt` keyword. Configure the [Hotkey](https://www.alfredapp.com/help/workflows/triggers/hotkey/) for faster toggling.
 
 ![Connect or disconnect bluetooth](Workflow/images/about/btt.png)
