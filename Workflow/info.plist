@@ -36,6 +36,19 @@
 		</array>
 		<key>92F90D27-0051-41F8-B6C1-7CED843FB32F</key>
 		<array/>
+		<key>D149098A-536A-4E14-A49F-D2AFF5C4A329</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>781EF45D-625B-4E15-9863-F285B13F5526</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 	</dict>
 	<key>createdby</key>
 	<string>Vítor Galvão</string>
@@ -47,6 +60,60 @@
 	<string>Dente Azul</string>
 	<key>objects</key>
 	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>script</key>
+				<string>blueutil --power 'toggle'</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>5</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>781EF45D-625B-4E15-9863-F285B13F5526</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>0</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>0</integer>
+				<key>hotmod</key>
+				<integer>0</integer>
+				<key>hotstring</key>
+				<string></string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>D149098A-536A-4E14-A49F-D2AFF5C4A329</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -264,7 +331,7 @@ Search your paired bluetooth devices via the `btd` keyword. Press &lt;kbd&gt;↩
 
 ![Connect of disconnect devices](images/about/btd.png)
 
-Toggle bluetooth as a whole via the `btt` keyword.
+Toggle bluetooth as a whole via the `btt` keyword. Configure the [Hotkey](https://www.alfredapp.com/help/workflows/triggers/hotkey/) for faster toggling.
 
 ![Connect or disconnect bluetooth](images/about/btt.png)</string>
 	<key>uidata</key>
@@ -274,7 +341,7 @@ Toggle bluetooth as a whole via the `btt` keyword.
 			<key>xpos</key>
 			<real>265</real>
 			<key>ypos</key>
-			<real>25</real>
+			<real>195</real>
 		</dict>
 		<key>6DC6A16C-DD83-4EBC-B2E0-625FB1BCF1AD</key>
 		<dict>
@@ -283,7 +350,7 @@ Toggle bluetooth as a whole via the `btt` keyword.
 			<key>xpos</key>
 			<real>35</real>
 			<key>ypos</key>
-			<real>185</real>
+			<real>355</real>
 		</dict>
 		<key>75C921E4-2503-460C-A531-3D3F4EC85976</key>
 		<dict>
@@ -292,14 +359,30 @@ Toggle bluetooth as a whole via the `btt` keyword.
 			<key>xpos</key>
 			<real>35</real>
 			<key>ypos</key>
-			<real>25</real>
+			<real>195</real>
+		</dict>
+		<key>781EF45D-625B-4E15-9863-F285B13F5526</key>
+		<dict>
+			<key>xpos</key>
+			<real>265</real>
+			<key>ypos</key>
+			<real>35</real>
 		</dict>
 		<key>92F90D27-0051-41F8-B6C1-7CED843FB32F</key>
 		<dict>
 			<key>xpos</key>
 			<real>265</real>
 			<key>ypos</key>
-			<real>185</real>
+			<real>355</real>
+		</dict>
+		<key>D149098A-536A-4E14-A49F-D2AFF5C4A329</key>
+		<dict>
+			<key>note</key>
+			<string>Toggle Bluetooth</string>
+			<key>xpos</key>
+			<real>35</real>
+			<key>ypos</key>
+			<real>35</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
@@ -347,6 +430,8 @@ Toggle bluetooth as a whole via the `btt` keyword.
 			<string>full_toggle_keyword</string>
 		</dict>
 	</array>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
 	<string>2023.3</string>
 	<key>webaddress</key>
