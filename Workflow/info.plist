@@ -12,6 +12,16 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
+				<string>F265BD48-6184-4CF9-BC09-B9E17F241B4E</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>92F90D27-0051-41F8-B6C1-7CED843FB32F</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -33,6 +43,16 @@
 				<key>vitoclose</key>
 				<false/>
 			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>F265BD48-6184-4CF9-BC09-B9E17F241B4E</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
 		</array>
 		<key>92F90D27-0051-41F8-B6C1-7CED843FB32F</key>
 		<array/>
@@ -45,6 +65,21 @@
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>F265BD48-6184-4CF9-BC09-B9E17F241B4E</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>658FE294-DEF2-49E3-BFF3-60B4C4BF1439</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>10CDCB96-3D1F-461C-8CB2-208B28BEC8D6</string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -165,7 +200,15 @@
 				<key>runningsubtext</key>
 				<string>Gathering bluetooth status…</string>
 				<key>script</key>
-				<string>function runCommand(...arguments) {
+				<string>// Helpers
+function envVar(varName) {
+  return $.NSProcessInfo
+    .processInfo
+    .environment
+    .objectForKey(varName).js
+}
+
+function runCommand(...arguments) {
   const task = $.NSTask.alloc.init
   const stdout = $.NSPipe.pipe
 
@@ -177,33 +220,47 @@
   const dataOut = stdout.fileHandleForReading.readDataToEndOfFileAndReturnError(false)
   const stringOut = $.NSString.alloc.initWithDataEncoding(dataOut, $.NSUTF8StringEncoding).js
 
-  return stringOut
+  return { stdout: stringOut, exitCode: task.terminationStatus }
 }
 
-let currentState, toggleState, icon
+function run() {
+  // Check Bluetooth permission
+  const hasPermission = runCommand(`${envVar("alfred_preferences")}/workflows/${envVar("alfred_workflow_uid")}/has-bluetooth-permission`).exitCode === 0
 
-if (runCommand("blueutil", "--power") === "0\n") {
-  currentState = "Off"
-  toggleState = "on"
-  iconPath = "icon_alt.png"
-} else {
-  currentState = "On"
-  toggleState = "off"
-  iconPath = "icon.png"
-}
+  if (!hasPermission) return JSON.stringify({ items: [{
+    variables: { open_system_settings: true },
+    title: "Unable to Access Bluetooth",
+    subtitle: "Press ↩ to open System Settings, then grant Alfred Bluetooth permissions",
+    icon: { path: "icon_alt.png" }
+  }]})
 
-JSON.stringify({ items: [{
-  title: `Bluetooth is ${currentState}`,
-  subtitle: `Action to turn it ${toggleState}`,
-  arg: toggleState,
-  icon: { path: iconPath }
-}]})</string>
+  // Main
+  let currentState, toggleState, icon
+  const powerState = parseInt(runCommand("blueutil", "--power").stdout)
+
+  if (powerState === 0) {
+    currentState = "Off"
+    toggleState = "on"
+    iconPath = "icon_alt.png"
+  } else  {
+    currentState = "On"
+    toggleState = "off"
+    iconPath = "icon.png"
+  }
+
+  return JSON.stringify({ items: [{
+    title: `Bluetooth is ${currentState}`,
+    subtitle: `Action to turn it ${toggleState}`,
+    arg: toggleState,
+    icon: { path: iconPath }
+  }]})
+}</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
 				<string></string>
 				<key>subtext</key>
-				<string>Turn bluetooth on or off</string>
+				<string>Turn Bluetooth On or Off</string>
 				<key>title</key>
 				<string>Toggle Bluetooth</string>
 				<key>type</key>
@@ -217,6 +274,59 @@ JSON.stringify({ items: [{
 			<string>75C921E4-2503-460C-A531-3D3F4EC85976</string>
 			<key>version</key>
 			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>browser</key>
+				<string></string>
+				<key>skipqueryencode</key>
+				<false/>
+				<key>skipvarencode</key>
+				<false/>
+				<key>spaces</key>
+				<string></string>
+				<key>url</key>
+				<string>x-apple.systempreferences:com.apple.preference.security?Privacy_Bluetooth</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openurl</string>
+			<key>uid</key>
+			<string>658FE294-DEF2-49E3-BFF3-60B4C4BF1439</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string>{var:open_system_settings}</string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>5</integer>
+						<key>matchstring</key>
+						<string></string>
+						<key>outputlabel</key>
+						<string>Open System Settings</string>
+						<key>uid</key>
+						<string>10CDCB96-3D1F-461C-8CB2-208B28BEC8D6</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string></string>
+				<key>hideelse</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>F265BD48-6184-4CF9-BC09-B9E17F241B4E</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -271,7 +381,15 @@ JSON.stringify({ items: [{
 				<key>runningsubtext</key>
 				<string>Gathering devices info…</string>
 				<key>script</key>
-				<string>function runCommand(...arguments) {
+				<string>// Helpers
+function envVar(varName) {
+  return $.NSProcessInfo
+    .processInfo
+    .environment
+    .objectForKey(varName).js
+}
+
+function runCommand(...arguments) {
   const task = $.NSTask.alloc.init
   const stdout = $.NSPipe.pipe
 
@@ -283,32 +401,45 @@ JSON.stringify({ items: [{
   const dataOut = stdout.fileHandleForReading.readDataToEndOfFileAndReturnError(false)
   const stringOut = $.NSString.alloc.initWithDataEncoding(dataOut, $.NSUTF8StringEncoding).js
 
-  return stringOut
+  return { stdout: stringOut, exitCode: task.terminationStatus }
 }
 
-pairedDevices = JSON.parse(runCommand("blueutil", "--format", "json", "--paired"))
+function run() {
+  // Check Bluetooth permission
+  const hasPermission = runCommand(`${envVar("alfred_preferences")}/workflows/${envVar("alfred_workflow_uid")}/has-bluetooth-permission`).exitCode === 0
 
-sfItems = pairedDevices.map(device =&gt; {
-  state = device["connected"] ? "Connected" : "Not Connected"
-  iconPath = device["connected"] ? "icon.png" : "icon_alt.png"
+  if (!hasPermission) return JSON.stringify({ items: [{
+    variables: { open_system_settings: true },
+    title: "Unable to Access Bluetooth",
+    subtitle: "Press ↩ to open System Settings, then grant Alfred Bluetooth permissions",
+    icon: { path: "icon_alt.png" }
+  }]})
 
-  return {
-    variables: { connected: device["connected"] },
-    uid: device["address"],
-    title: device["name"],
-    subtitle: state,
-    arg: device["address"],
-    icon: { path: iconPath }
-  }
-})
+  // Main
+  const pairedDevices = JSON.parse(runCommand("blueutil", "--format", "json", "--paired").stdout)
 
-JSON.stringify({ rerun: 0.5, items: sfItems })</string>
+  const sfItems = pairedDevices.map(device =&gt; {
+    const state = device["connected"] ? "Connected" : "Not Connected"
+    const iconPath = device["connected"] ? "icon.png" : "icon_alt.png"
+
+    return {
+      variables: { connected: device["connected"] },
+      uid: device["address"],
+      title: device["name"],
+      subtitle: state,
+      arg: device["address"],
+      icon: { path: iconPath }
+    }
+  })
+
+  return JSON.stringify({ rerun: 0.5, items: sfItems })
+}</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
 				<string></string>
 				<key>subtext</key>
-				<string>Action to toggle connection status</string>
+				<string>Action to Toggle Connection Status</string>
 				<key>title</key>
 				<string>Show Paired Bluetooth Devices</string>
 				<key>type</key>
@@ -336,6 +467,13 @@ Toggle bluetooth as a whole via the `btt` keyword. Configure the [Hotkey](https:
 ![Connect or disconnect bluetooth](images/about/btt.png)</string>
 	<key>uidata</key>
 	<dict>
+		<key>658FE294-DEF2-49E3-BFF3-60B4C4BF1439</key>
+		<dict>
+			<key>xpos</key>
+			<real>430</real>
+			<key>ypos</key>
+			<real>325</real>
+		</dict>
 		<key>660C13F4-B83C-4929-9DD0-735D2BAA2F07</key>
 		<dict>
 			<key>xpos</key>
@@ -350,7 +488,7 @@ Toggle bluetooth as a whole via the `btt` keyword. Configure the [Hotkey](https:
 			<key>xpos</key>
 			<real>35</real>
 			<key>ypos</key>
-			<real>355</real>
+			<real>455</real>
 		</dict>
 		<key>75C921E4-2503-460C-A531-3D3F4EC85976</key>
 		<dict>
@@ -373,7 +511,7 @@ Toggle bluetooth as a whole via the `btt` keyword. Configure the [Hotkey](https:
 			<key>xpos</key>
 			<real>265</real>
 			<key>ypos</key>
-			<real>355</real>
+			<real>455</real>
 		</dict>
 		<key>D149098A-536A-4E14-A49F-D2AFF5C4A329</key>
 		<dict>
@@ -383,6 +521,13 @@ Toggle bluetooth as a whole via the `btt` keyword. Configure the [Hotkey](https:
 			<real>35</real>
 			<key>ypos</key>
 			<real>35</real>
+		</dict>
+		<key>F265BD48-6184-4CF9-BC09-B9E17F241B4E</key>
+		<dict>
+			<key>xpos</key>
+			<real>305</real>
+			<key>ypos</key>
+			<real>355</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
