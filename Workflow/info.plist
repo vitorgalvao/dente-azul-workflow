@@ -578,7 +578,7 @@ Toggle bluetooth as a whole via the `btt` keyword. Configure the [Hotkey](https:
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>2023.5</string>
+	<string>2023.6</string>
 	<key>webaddress</key>
 	<string>https://github.com/vitorgalvao/dente-azul-workflow/</string>
 </dict>
