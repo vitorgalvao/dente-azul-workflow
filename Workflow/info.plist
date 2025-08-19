@@ -578,11 +578,26 @@ Toggle bluetooth as a whole via the `btt` keyword. Configure the [Hotkey](https:
 			<key>variable</key>
 			<string>full_toggle_keyword</string>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>EXPERIMENTAL: Use system_profiler for paired device queries. Fixes multipoint devices appearing disconnected when connected (requires blueutil 2.13.0+)</string>
+			<key>label</key>
+			<string>Use System Profiler for Device Queries</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>BLUEUTIL_USE_SYSTEM_PROFILER</string>
+		</dict>
 	</array>
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>2024.1</string>
+	<string>2024.2</string>
 	<key>webaddress</key>
 	<string>https://github.com/vitorgalvao/dente-azul-workflow/</string>
 </dict>
