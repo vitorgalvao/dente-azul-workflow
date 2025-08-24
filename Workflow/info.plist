@@ -296,7 +296,7 @@ Search your paired bluetooth devices via the `btd` keyword.
 		</dict>
 	</array>
 	<key>version</key>
-	<string>2024.1</string>
+	<string>25.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/vitorgalvao/dente-azul-workflow/</string>
 </dict>
