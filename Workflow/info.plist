@@ -48,7 +48,7 @@
 	<key>createdby</key>
 	<string>Vítor Galvão</string>
 	<key>description</key>
-	<string>Toggle bluetooth and paired device connectivity</string>
+	<string>Toggle bluetooth paired device connectivity</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
