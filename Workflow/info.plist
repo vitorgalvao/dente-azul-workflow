@@ -6,11 +6,11 @@
 	<string>com.vitorgalvao.alfred.denteazul</string>
 	<key>connections</key>
 	<dict>
-		<key>6DC6A16C-DD83-4EBC-B2E0-625FB1BCF1AD</key>
+		<key>C2CF456B-4648-4954-ACED-E39B2E6531C5</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>92F90D27-0051-41F8-B6C1-7CED843FB32F</string>
+				<string>AA94621B-D4A3-4096-903A-EDC3D1B93186</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -29,8 +29,6 @@
 				<false/>
 			</dict>
 		</array>
-		<key>92F90D27-0051-41F8-B6C1-7CED843FB32F</key>
-		<array/>
 		<key>F265BD48-6184-4CF9-BC09-B9E17F241B4E</key>
 		<array>
 			<dict>
@@ -60,31 +58,6 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>readonly address="${1}"
-
-[[ "${connected}" == '1' ]] &amp;&amp; blueutil --disconnect "${address}" --wait-disconnect "${address}" || blueutil --connect "${address}" --wait-connect "${address}"</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>11</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>92F90D27-0051-41F8-B6C1-7CED843FB32F</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>alfredfiltersresults</key>
 				<true/>
 				<key>alfredfiltersresultsmatchmode</key>
@@ -110,34 +83,21 @@
 				<key>runningsubtext</key>
 				<string>Gathering devices info…</string>
 				<key>script</key>
-				<string>// Helpers
-function envVar(varName) {
-  return $.NSProcessInfo
-    .processInfo
-    .environment
-    .objectForKey(varName).js
-}
-
-function runCommand(...arguments) {
-  const task = $.NSTask.alloc.init
-  const stdout = $.NSPipe.pipe
-
-  task.executableURL = $.NSURL.fileURLWithPath("/usr/bin/env")
-  task.arguments = arguments
-  task.standardOutput = stdout
-  task.launchAndReturnError(false)
-
-  const dataOut = stdout.fileHandleForReading.readDataToEndOfFileAndReturnError(false)
-  const stringOut = $.NSString.alloc.initWithDataEncoding(dataOut, $.NSUTF8StringEncoding).js
-
-  return { stdout: stringOut, exitCode: task.terminationStatus }
-}
+				<string>ObjC.import("IOBluetooth")
 
 function run() {
-  // Check Bluetooth permission
-  const hasPermission = runCommand(`${envVar("alfred_preferences")}/workflows/${envVar("alfred_workflow_uid")}/has-bluetooth-permission`).exitCode === 0
+  // Check minimum OS
+  const osVersion = $.NSProcessInfo.processInfo.operatingSystemVersion
 
-  if (!hasPermission) return JSON.stringify({ items: [{
+  if (parseInt(osVersion.majorVersion) &lt; 10 &amp;&amp; parseInt(osVersion.minorVersion) &lt; 15) return JSON.stringify({
+    title: "A More Recent macOS Version Is Required",
+    subtitle: "This workflow requires at least macOS 10.15",
+    valid: false,
+    icon: { path: "icon_alt.png" }
+  })
+
+  // Check Bluetooth permissions
+  if ($.CBManager.authorization !== $.CBManagerAuthorizationAllowedAlways) return JSON.stringify({ items: [{
     variables: { open_system_settings: true },
     title: "Unable to Access Bluetooth",
     subtitle: "Press ↩ to open System Settings, then grant Alfred Bluetooth permissions",
@@ -145,19 +105,17 @@ function run() {
   }]})
 
   // Main
-  const pairedDevices = JSON.parse(runCommand("blueutil", "--format", "json", "--paired").stdout)
-
-  const sfItems = pairedDevices.map(device =&gt; {
-    const state = device["connected"] ? "Connected" : "Not Connected"
-    const iconPath = device["connected"] ? "icon.png" : "icon_alt.png"
+  const sfItems = $.IOBluetoothDevice.pairedDevices.js.map(device =&gt; {
+    const name = device.nameOrAddress.js
+    const address = device.addressString.js
+    const connected = device.isConnected
 
     return {
-      variables: { connected: device["connected"] },
-      uid: device["address"],
-      title: device["name"],
-      subtitle: state,
-      arg: device["address"],
-      icon: { path: iconPath }
+      uid: address,
+      title: name,
+      subtitle: connected ? "Connected" : "Not Connected",
+      arg: address,
+      icon: { path: connected ? "icon.png" : "icon_alt.png" }
     }
   })
 
@@ -181,9 +139,44 @@ function run() {
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
-			<string>6DC6A16C-DD83-4EBC-B2E0-625FB1BCF1AD</string>
+			<string>C2CF456B-4648-4954-ACED-E39B2E6531C5</string>
 			<key>version</key>
 			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>script</key>
+				<string>ObjC.import("IOBluetooth")
+
+function run(argv) {
+  const device = $.IOBluetoothDevice.pairedDevices.js.find(device =&gt; device.addressString.js === argv[0])
+  const connected = device.isConnected
+  const maxTimeout = Date.now() + 5000
+
+  // Toggle connection
+  connected ? device.closeConnection : device.openConnection
+
+  // Wait (with timeout) for connection to toggle before allowing script to terminate
+  while (device.isConnected === connected &amp;&amp; Date.now() &lt; maxTimeout) delay(0.5)
+}</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>7</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>AA94621B-D4A3-4096-903A-EDC3D1B93186</string>
+			<key>version</key>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -256,17 +249,17 @@ Search your paired bluetooth devices via the `btd` keyword.
 			<key>ypos</key>
 			<real>210</real>
 		</dict>
-		<key>6DC6A16C-DD83-4EBC-B2E0-625FB1BCF1AD</key>
-		<dict>
-			<key>xpos</key>
-			<real>80</real>
-			<key>ypos</key>
-			<real>65</real>
-		</dict>
-		<key>92F90D27-0051-41F8-B6C1-7CED843FB32F</key>
+		<key>AA94621B-D4A3-4096-903A-EDC3D1B93186</key>
 		<dict>
 			<key>xpos</key>
 			<real>310</real>
+			<key>ypos</key>
+			<real>65</real>
+		</dict>
+		<key>C2CF456B-4648-4954-ACED-E39B2E6531C5</key>
+		<dict>
+			<key>xpos</key>
+			<real>80</real>
 			<key>ypos</key>
 			<real>65</real>
 		</dict>
