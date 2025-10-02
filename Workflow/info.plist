@@ -29,8 +29,20 @@
 				<false/>
 			</dict>
 		</array>
+		<key>3BCDFECE-FED4-404D-A416-BBC72C1324CF</key>
+		<array/>
 		<key>C2CF456B-4648-4954-ACED-E39B2E6531C5</key>
 		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>3BCDFECE-FED4-404D-A416-BBC72C1324CF</string>
+				<key>modifiers</key>
+				<integer>131072</integer>
+				<key>modifiersubtext</key>
+				<string>Ignore</string>
+				<key>vitoclose</key>
+				<true/>
+			</dict>
 			<dict>
 				<key>destinationuid</key>
 				<string>AA94621B-D4A3-4096-903A-EDC3D1B93186</string>
@@ -81,6 +93,53 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>script</key>
+				<string>ObjC.import("IOBluetooth")
+
+function envVar(varName) {
+  return $.NSProcessInfo
+    .processInfo
+    .environment
+    .objectForKey(varName).js
+}
+
+function run(argv) {
+  const address = argv[0]
+  const device = $.IOBluetoothDevice.pairedDevices.js
+    .find(device =&gt; device.addressString.js === address)
+  const name = device.nameOrAddress.js
+
+  const ignoredAddresses = envVar("ignored").split("\n")
+
+  Application("com.runningwithcrayons.Alfred").setConfiguration(
+    "ignored",
+    {
+      toValue: ignoredAddresses.concat(`${address} | ${name}`).join("\n"),
+      inWorkflow: envVar("alfred_workflow_bundleid")
+    }
+  )
+}</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>7</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>3BCDFECE-FED4-404D-A416-BBC72C1324CF</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>alfredfiltersresults</key>
 				<true/>
 				<key>alfredfiltersresultsmatchmode</key>
@@ -127,10 +186,18 @@ function run() {
     icon: { path: "icon_alt.png" }
   }]})
 
+  // Ignored devices
+  const ignoredAddresses = $.NSProcessInfo.processInfo.environment.objectForKey("ignored").js
+    .split("\n")
+    .map(device =&gt; device.split("|")[0].trim())
+
   // Main
-  const sfItems = $.IOBluetoothDevice.pairedDevices.js.map(device =&gt; {
-    const name = device.nameOrAddress.js
+  const sfItems = $.IOBluetoothDevice.pairedDevices.js.flatMap(device =&gt; {
     const address = device.addressString.js
+
+    if (ignoredAddresses.includes(address)) return []
+
+    const name = device.nameOrAddress.js
     const connected = device.isConnected
 
     return {
@@ -177,7 +244,8 @@ function run() {
 				<string>ObjC.import("IOBluetooth")
 
 function run(argv) {
-  const device = $.IOBluetoothDevice.pairedDevices.js.find(device =&gt; device.addressString.js === argv[0])
+  const device = $.IOBluetoothDevice.pairedDevices.js
+    .find(device =&gt; device.addressString.js === argv[0])
   const connected = device.isConnected
   const maxTimeout = Date.now() + 5000
 
@@ -388,6 +456,7 @@ Search your paired bluetooth devices via the `btd` keyword.
 ![Connect of disconnect devices](images/about/btd.png)
 
 * &lt;kbd&gt;↩&lt;/kbd&gt; Toggle connected state.
+* &lt;kbd&gt;⇧&lt;/kbd&gt;&lt;kbd&gt;↩&lt;/kbd&gt; Ignore device. Restore it from the [Workflow’s Configuration](https://www.alfredapp.com/help/workflows/user-configuration/).
 
 Toggle bluetooth as a whole via the `btt` keyword.
 
@@ -401,42 +470,49 @@ Toggle bluetooth as a whole via the `btt` keyword.
 			<key>xpos</key>
 			<real>80</real>
 			<key>ypos</key>
-			<real>360</real>
+			<real>515</real>
+		</dict>
+		<key>3BCDFECE-FED4-404D-A416-BBC72C1324CF</key>
+		<dict>
+			<key>xpos</key>
+			<real>310</real>
+			<key>ypos</key>
+			<real>65</real>
 		</dict>
 		<key>547D5716-1884-419B-987A-454B94A74D14</key>
 		<dict>
 			<key>xpos</key>
 			<real>310</real>
 			<key>ypos</key>
-			<real>360</real>
+			<real>515</real>
 		</dict>
 		<key>658FE294-DEF2-49E3-BFF3-60B4C4BF1439</key>
 		<dict>
 			<key>xpos</key>
 			<real>475</real>
 			<key>ypos</key>
-			<real>210</real>
+			<real>365</real>
 		</dict>
 		<key>AA94621B-D4A3-4096-903A-EDC3D1B93186</key>
 		<dict>
 			<key>xpos</key>
 			<real>310</real>
 			<key>ypos</key>
-			<real>60</real>
+			<real>215</real>
 		</dict>
 		<key>C2CF456B-4648-4954-ACED-E39B2E6531C5</key>
 		<dict>
 			<key>xpos</key>
 			<real>80</real>
 			<key>ypos</key>
-			<real>60</real>
+			<real>215</real>
 		</dict>
 		<key>F265BD48-6184-4CF9-BC09-B9E17F241B4E</key>
 		<dict>
 			<key>xpos</key>
 			<real>350</real>
 			<key>ypos</key>
-			<real>240</real>
+			<real>395</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
@@ -483,7 +559,30 @@ Toggle bluetooth as a whole via the `btt` keyword.
 			<key>variable</key>
 			<string>full_toggle_keyword</string>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+				<key>verticalsize</key>
+				<integer>6</integer>
+			</dict>
+			<key>description</key>
+			<string>Newline-separared list of devices to hide.</string>
+			<key>label</key>
+			<string>Ignored Devices</string>
+			<key>type</key>
+			<string>textarea</string>
+			<key>variable</key>
+			<string>ignored</string>
+		</dict>
 	</array>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
 	<string>25.2</string>
 	<key>webaddress</key>
