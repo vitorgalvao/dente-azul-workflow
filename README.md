@@ -11,6 +11,7 @@ Search your paired bluetooth devices via the `btd` keyword.
 ![Connect of disconnect devices](Workflow/images/about/btd.png)
 
 * <kbd>↩</kbd> Toggle connected state.
+* <kbd>⇧</kbd><kbd>↩</kbd> Ignore device. Restore it from the [Workflow’s Configuration](https://www.alfredapp.com/help/workflows/user-configuration/).
 
 Toggle bluetooth as a whole via the `btt` keyword.
 
