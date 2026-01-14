@@ -250,7 +250,8 @@ function run(argv) {
   const maxTimeout = Date.now() + 5000
 
   // Toggle connection
-  connected ? device.closeConnection : device.openConnection
+  // Needs null argument for connection due to changes in macOS 26 Tahoe
+  connected ? device.closeConnection : device.openConnection(null)
 
   // Wait (with timeout) for connection to toggle before allowing script to terminate
   while (device.isConnected === connected &amp;&amp; Date.now() &lt; maxTimeout) delay(0.5)
